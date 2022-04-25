@@ -29,6 +29,7 @@
     {
         border: 1px solid black;
         border-radius: 5px;
+        padding: 8px;
     }
 </style>
 <body>
@@ -102,7 +103,7 @@
                 }
             }
             function displayData(data)
-            {
+            {   console.log(data);
                 var pokemonCard=document.createElement('div');
                 var id=document.createElement('h3');
                 id.textContent="ID :" + data.id;
@@ -112,7 +113,23 @@
                 height.textContent="Height :" + data.height;
                 var weight=document.createElement('h3');
                 weight.textContent="Weight :" + data.weight;
-                pokemonCard.append(id,name,height,weight);
+                var abilities=document.createElement('h3');
+                var str="";
+                data.abilities.forEach(element => {
+
+                    str=str+element.ability.name+",";
+                    
+                });
+                abilities.textContent="Abilities : "+ str;
+                var moves=document.createElement('h3');
+                var str="";
+                data.moves.forEach(element => {
+
+                    str=str+element.move.name+",";
+                    
+                });
+                moves.textContent="Moves : "+ str;
+                pokemonCard.append(id,name,height,weight,abilities,moves);
                 document.getElementById("second_container").append(pokemonCard);
 
             }
