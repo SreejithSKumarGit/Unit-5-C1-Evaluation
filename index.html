@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pokemon</title>
+</head>
+<style>
+    #first_container
+    {
+        text-align: center;
+        padding:  0% 45%;
+        font-size: 20px;
+        font-weight: 600;
+    }
+    #first_container > table,tr,td
+    {   
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+    #second_container
+    {
+        text-align: center;
+        padding:  0% 20%;
+        
+    }
+    #second_container >div
+    {
+        border: 1px solid black;
+        border-radius: 5px;
+    }
+</style>
+<body>
+    <div id="first_container">
+    </div>
+    <div id="second_container">
+        <h1>Know the details of pokemon</h1>
+        <input id="searchData" type="text" placeholder="Enter the name of pokemon">
+        <input id="searchBtn" type="button" value="Search">
+    </div>
+    <script>
+        var pokemon;
+        if(localStorage.getItem('pokemon')==null)
+        {
+            getPokData();
+            async function getPokData()
+            {
+                try {
+                    let res=await fetch(`https://pokeapi.co/api/v2/pokemon`);
+                    let data= await res.json();
+                    var pokemon=[];
+                    data.results.forEach(element => {
+                        var pokemonObj={
+                            name:element.name,
+                            url:element.url,
+                        }
+                        pokemon.push(pokemonObj);
+                    });
+                    localStorage.setItem('pokemon',JSON.stringify(pokemon));         
+
+                } catch (error) {
+                    console.log("Error : ", error);
+                }
+            }
+        }
+        var pokemonData=JSON.parse(localStorage.getItem('pokemon'));
+        displayDataTable(pokemonData);
+        function displayDataTable(data)
+        {
+           var table= document.createElement('table');
+           data.forEach(element =>{
+            var row=document.createElement('tr');
+            var name=document.createElement('td');
+           name.textContent=element.name;
+           row.append(name);
+           table.append(row);
+           });
+           document.getElementById("first_container").append(table);
+        }
+        document.getElementById("searchBtn").addEventListener('click',getData);
+        function getData()
+        {   var pokemonData=JSON.parse(localStorage.getItem('pokemon'));
+            var searchValue=document.getElementById("searchData").value;
+            var url;         
+            pokemonData.forEach(element => {
+                if(searchValue==element.name)
+                {
+                    url=element.url;
+                    
+                }
+            });
+            fetchData(url);
+            async function fetchData(url)
+            {
+                try {
+                    var res=await fetch(url);
+                    var data=await res.json();
+                    displayData(data);
+                } catch (error) {
+                    console.log("Error : ", error); 
+                }
+            }
+            function displayData(data)
+            {
+                var pokemonCard=document.createElement('div');
+                var id=document.createElement('h3');
+                id.textContent="ID :" + data.id;
+                var name=document.createElement('h3');
+                name.textContent="Name :" + data.name;
+                var height=document.createElement('h3');
+                height.textContent="Height :" + data.height;
+                var weight=document.createElement('h3');
+                weight.textContent="Weight :" + data.weight;
+                pokemonCard.append(id,name,height,weight);
+                document.getElementById("second_container").append(pokemonCard);
+
+            }
+
+
+        }
+    </script>
+</body>
+</html>
